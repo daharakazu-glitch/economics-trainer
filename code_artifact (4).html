@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>エコノミクス甲子園 対策トレーナー</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    }
+    .card-shadow {
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    }
+    @keyframes pulse-fast {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+    .timer-urgent {
+      animation: pulse-fast 0.6s infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col">
+
+  <header class="bg-indigo-950 text-white shadow-lg sticky top-0 z-20">
+    <div class="max-w-4xl mx-auto px-4 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-400 text-indigo-950 flex items-center justify-center text-xl font-black shadow">
+          🏆
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-extrabold tracking-tight">エコノミクス甲子園 対策トレーナー <span class="text-xs bg-emerald-500 text-slate-950 px-2 py-0.5 rounded-full ml-1 align-middle font-black">公式事前教材完全対応・全55問</span></h1>
+          <p class="text-xs text-indigo-200">全国高校生金融経済クイズ選手権 オンライン事前学習教材＆頻出テーマ完全網羅</p>
+        </div>
+      </div>
+
+      <!-- モード切替タブ -->
+      <div class="flex bg-indigo-900/90 p-1 rounded-xl text-xs sm:text-sm font-bold border border-indigo-800 w-full sm:w-auto justify-center flex-wrap">
+        <button id="modeQuizBtn" onclick="switchMode('quiz')" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-white text-indigo-950 shadow transition">
+          📝 4択演習
+        </button>
+        <button id="modeSpeedBtn" onclick="switchMode('speed')" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg text-indigo-200 hover:text-white transition">
+          ⚡ 早押し実戦
+        </button>
+        <button id="modeCardBtn" onclick="switchMode('flashcard')" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg text-indigo-200 hover:text-white transition">
+          🗂️ 用語カード
+        </button>
+        <button id="modeMaterialsBtn" onclick="switchMode('materials')" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg text-amber-300 hover:text-amber-200 transition">
+          📚 公式事前教材一覧
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl w-full mx-auto px-4 py-6 flex-1">
+    
+    <!-- 公式オンライン事前学習教材バナー -->
+    <div class="mb-5">
+      <div class="bg-gradient-to-br from-indigo-950 via-indigo-900 to-slate-900 text-white p-5 rounded-2xl card-shadow border border-indigo-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="text-[11px] font-extrabold uppercase tracking-wider bg-emerald-400 text-slate-950 px-2.5 py-0.5 rounded-full">📚 第21回 公式オンライン事前学習教材準拠</span>
+          </div>
+          <p class="text-xs sm:text-sm font-bold text-slate-100 leading-relaxed">
+            J-FLEC・財務省・金融庁・消費者庁・環境省・Visa・不動産証券化協会・日本FP協会・日本損害保険協会・資産運用業協会・日本資金決済業協会・日本テクニカルアナリスト協会・日本クリプトコイン協会の配布教材から重要問題を網羅！
+          </p>
+        </div>
+        <div class="flex sm:flex-col gap-2 shrink-0">
+          <button onclick="applyFilter('📚 公式事前教材（J-FLEC・省庁・協会）')" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold rounded-xl shadow transition text-center">
+            📚 事前教材の問題を解く
+          </button>
+          <button onclick="switchMode('materials')" class="px-3.5 py-2 bg-indigo-800 hover:bg-indigo-700 text-indigo-100 text-xs font-bold rounded-xl border border-indigo-600 transition text-center">
+            🔗 教材リスト＆リンクを見る
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- カテゴリフィルター＆出題オプション -->
+    <div class="mb-5 bg-white p-4 rounded-2xl card-shadow border border-slate-200/80">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+        <span class="text-xs font-extrabold text-slate-500 uppercase tracking-wider">📂 出題分野フィルター（全55問収録）</span>
+        <div class="flex items-center gap-2">
+          <button id="shuffleBtn" onclick="shuffleQuestions()" class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full border border-slate-200 transition">
+            🔀 シャッフル出題
+          </button>
+          <button id="wrongOnlyBtn" onclick="startWrongReview()" class="hidden text-xs font-bold bg-rose-50 hover:bg-rose-100 text-rose-700 px-3 py-1 rounded-full border border-rose-200 transition">
+            🔥 誤答のみ復習 (0)
+          </button>
+          <span id="questionCountBadge" class="text-xs font-bold bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full border border-indigo-100">全55問</span>
+        </div>
+      </div>
+      <div id="categoryContainer" class="flex flex-wrap gap-2"></div>
+    </div>
+
+    <section id="quizSection" class="bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+      <!-- ステータスバー -->
+      <div class="bg-slate-50 px-5 py-3.5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <span id="currentCategoryBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-indigo-100 text-indigo-800">金融・日銀</span>
+          <span id="progressText" class="text-sm font-bold text-slate-600">第 1 / 15 問</span>
+        </div>
+
+        <!-- 早押しタイマー（早押しモード時のみ表示） -->
+        <div id="timerDisplay" class="hidden items-center gap-2 bg-amber-50 border-2 border-amber-300 px-3.5 py-1 rounded-xl">
+          <span class="text-xs font-bold text-amber-900">⏱️ 残り</span>
+          <span id="timerSeconds" class="text-lg font-black text-amber-600 font-mono">15.0</span>
+          <span class="text-xs font-bold text-amber-800">秒</span>
+        </div>
+
+        <!-- スコア表示 -->
+        <div class="flex items-center gap-4 text-sm">
+          <span class="font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">
+            ⭕ 正解: <strong id="scoreCount">0</strong>
+          </span>
+          <span class="font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-200">
+            🏆 得点: <strong id="pointCount">0</strong> pt
+          </span>
+        </div>
+      </div>
+
+      <!-- プログレスバー -->
+      <div class="w-full bg-slate-200 h-2">
+        <div id="progressBar" class="bg-indigo-600 h-2 transition-all duration-300" style="width: 10%"></div>
+      </div>
+
+      <!-- 問題表示エリア -->
+      <div class="p-5 sm:p-8">
+        <div class="mb-2 text-xs font-bold text-indigo-600 tracking-wide" id="questionTermSub"></div>
+        <h2 id="questionText" class="text-lg sm:text-xl font-extrabold leading-relaxed text-slate-800 mb-6">
+          問題文がここに表示されます
+        </h2>
+
+        <!-- 選択肢リスト -->
+        <div id="optionsContainer" class="grid grid-cols-1 gap-3 mb-6"></div>
+
+        <!-- ヒントエリア -->
+        <div class="mb-4">
+          <button id="hintBtn" onclick="toggleHint()" class="text-xs font-bold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3.5 py-2 rounded-xl transition flex items-center gap-1.5">
+            <span>💡 ヒントを見る</span>
+          </button>
+          <div id="hintBox" class="hidden mt-2.5 p-3.5 bg-amber-50/90 border border-amber-200 rounded-xl text-sm text-amber-950 font-medium"></div>
+        </div>
+
+        <!-- 解説ボックス -->
+        <div id="explanationBox" class="hidden mt-6 p-5 rounded-2xl border-2">
+          <div id="resultHeader" class="font-extrabold text-lg mb-2 flex items-center gap-2"></div>
+          <p id="explanationText" class="text-sm sm:text-base leading-relaxed text-slate-700"></p>
+        </div>
+
+        <!-- フッターナビゲーション -->
+        <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+          <button onclick="resetQuiz()" class="text-xs sm:text-sm text-slate-500 hover:text-slate-800 font-bold px-3 py-2 rounded-lg hover:bg-slate-100 transition">
+            🔄 最初からやり直す
+          </button>
+          <button id="nextBtn" onclick="nextQuestion()" class="hidden px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl shadow-md hover:shadow-lg transition">
+            次の問題へ →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultSection" class="hidden bg-white rounded-2xl card-shadow border border-slate-200/80 p-8 text-center">
+      <div class="text-6xl mb-3">🎉</div>
+      <h2 class="text-2xl font-black text-slate-800 mb-2">演習完了！お疲れ様でした！</h2>
+      <p id="finalSummaryText" class="text-slate-600 font-medium mb-6"></p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
+        <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200">
+          <div class="text-xs font-bold text-emerald-700 mb-1">正解数</div>
+          <div id="finalCorrect" class="text-2xl font-black text-emerald-600">0 / 0</div>
+        </div>
+        <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-200">
+          <div class="text-xs font-bold text-indigo-700 mb-1">正答率</div>
+          <div id="finalRate" class="text-2xl font-black text-indigo-600">0%</div>
+        </div>
+        <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200">
+          <div class="text-xs font-bold text-amber-800 mb-1">総合スコア</div>
+          <div id="finalPoints" class="text-2xl font-black text-amber-600">0 pt</div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-3">
+        <button onclick="resetQuiz()" class="px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold rounded-xl shadow-md transition">
+          🔄 もう一度挑戦する
+        </button>
+        <button id="resultWrongBtn" onclick="startWrongReview()" class="hidden px-6 py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-xl shadow-md transition">
+          🔥 間違えた問題だけ復習する
+        </button>
+      </div>
+    </section>
+
+    <section id="flashcardSection" class="hidden">
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200/80 p-6 sm:p-8 text-center">
+        <div class="flex justify-between items-center mb-4">
+          <span id="cardCategoryBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-indigo-100 text-indigo-800"></span>
+          <span id="cardIndexText" class="text-sm font-bold text-slate-500">1 / 15</span>
+        </div>
+
+        <!-- クリックで裏返るカード -->
+        <div onclick="flipCard()" class="cursor-pointer my-4 min-h-[250px] flex flex-col justify-center items-center p-6 sm:p-10 rounded-2xl border-2 border-indigo-200 bg-gradient-to-br from-white via-indigo-50/30 to-indigo-100/40 hover:border-indigo-400 transition shadow-sm select-none">
+          <span id="cardSideLabel" class="text-xs uppercase font-extrabold tracking-widest text-indigo-600 bg-indigo-100 px-3 py-1 rounded-full mb-4">
+            表面：重要テーマ・問題
+          </span>
+          <h3 id="cardMainText" class="text-xl sm:text-2xl font-black text-slate-800 leading-relaxed mb-3"></h3>
+          <p id="cardSubText" class="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl"></p>
+          <span class="mt-6 text-xs font-bold text-indigo-500 flex items-center gap-1">
+            👆 タップ／クリックで「正解と解説」に裏返す
+          </span>
+        </div>
+
+        <div class="flex items-center justify-between mt-6 gap-2">
+          <button onclick="prevCard()" class="px-5 py-2.5 rounded-xl border border-slate-300 hover:bg-slate-100 text-sm font-bold transition">
+            ← 前のカード
+          </button>
+          <button onclick="flipCard()" class="px-6 py-2.5 rounded-xl bg-amber-100 text-amber-900 hover:bg-amber-200 text-sm font-extrabold transition">
+            🔄 裏返す
+          </button>
+          <button onclick="nextCard()" class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-bold shadow transition">
+            次のカード →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 公式オンライン事前学習教材一覧セクション -->
+    <section id="materialsSection" class="hidden space-y-5">
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200/80 p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200 mb-5">
+          <div>
+            <span class="text-xs font-extrabold bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full">第21回 エコノミクス甲子園 公式情報</span>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-800 mt-2">📚 オンライン事前学習教材 リスト＆出題ポイント</h2>
+            <p class="text-xs sm:text-sm text-slate-600 mt-1">
+              エコノミクス甲子園には「過去問集」がない代わりに、エントリー後に配布される<strong>事前学習教材</strong>およびオンライン公開教材から多くの問題が出題されます。
+            </p>
+          </div>
+          <a href="https://econ-koshien.com/?page_id=2362" target="_blank" rel="noopener noreferrer" class="shrink-0 inline-flex items-center gap-1.5 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-extrabold rounded-xl shadow transition">
+            🌐 公式教材ページを開く ↗
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="materialsGrid">
+          <!-- JSで教材カードを生成 -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const studyMaterialsList = [
+      {
+        org: "金融経済教育推進機構 (J-FLEC)",
+        titles: [
+          "これであなたもひとり立ち",
+          "大学生のための 人生とお金の知恵",
+          "18歳までに学ぶ 契約の知恵",
+          "マナブとメグミのお金のキホンBOOK",
+          "サクサクわかる！資産運用と証券投資スタートブック"
+        ],
+        keyTopics: "ライフプランと3大資金、家計管理、18歳成年と契約の拘束力、複利効果、長期・積立・分散投資、NISA・iDeCo",
+        filterCat: "💳 キャッシュレス・契約・消費者"
+      },
+      {
+        org: "財務省・金融庁・消費者庁・環境省",
+        titles: [
+          "もっと知りたい税のこと / これからの日本のために財政を考える（財務省）",
+          "基礎から学べる金融ガイド（金融庁）",
+          "社会への扉 / 鍛えよう、消費者力（消費者庁）",
+          "持続可能な社会の形成に向けた金融行動原則（環境省）"
+        ],
+        keyTopics: "直接税と間接税、プライマリーバランス、国債残高、クーリング・オフ制度、消費者ホットライン(188)、ESG金融・グリーンボンド",
+        filterCat: "財政・税金"
+      },
+      {
+        org: "Visa / 日本資金決済業協会",
+        titles: [
+          "キャッシュレスまるわかりテキスト（Visa）",
+          "前払式支払手段 知っておきたい法律のはなし（日本資金決済業協会）",
+          "資金移動サービス 知っておきたい法律のはなし（日本資金決済業協会）",
+          "詐欺・犯罪にご注意（日本資金決済業協会）"
+        ],
+        keyTopics: "クレジットカード（後払い）・デビット（即時払）・プリペイド（前払い）、3面/4面モデル、自家型と第三者型前払式支払手段、資金移動業の3類型（100万円上限等）",
+        filterCat: "💳 キャッシュレス・契約・消費者"
+      },
+      {
+        org: "不動産証券化協会 / 資産運用業協会",
+        titles: [
+          "今日から始められるかんたん不動産投資 初めてのJリート（不動産証券化協会）",
+          "新しいNISAではじめるJリート（不動産証券化協会）",
+          "わかりやすい投資信託ガイド / わかりやすいリートガイド（資産運用業協会）"
+        ],
+        keyTopics: "J-REIT（不動産投資信託）の仕組み、利益の90%超分配による実質法人税非課税、投資信託の3当事者（委託者・受託者・販売会社）、信託報酬（運用管理費用）",
+        filterCat: "📈 投信・Jリート・テクニカル"
+      },
+      {
+        org: "日本テクニカルアナリスト協会 / 日本クリプトコイン協会",
+        titles: [
+          "はじめの一歩 テクニカル分析 ハンドブック（基礎編・用語集）",
+          "暗号通貨やブロックチェーンの基礎を学べる漫画"
+        ],
+        keyTopics: "ローソク足（陽線・陰線・四本値）、移動平均線、ゴールデンクロス・デッドクロス、RSI・ボリンジャーバンド、ブロックチェーン、P2Pネットワーク、秘密鍵管理",
+        filterCat: "📈 投信・Jリート・テクニカル"
+      },
+      {
+        org: "日本FP協会 / 日本損害保険協会 / 金融財政事情研究会",
+        titles: [
+          "進学にかかるお金と奨学金の話 / 10代から学ぶパーソナルファイナンス（日本FP協会）",
+          "明るい未来へTRY！ 〜リスクと備え〜（日本損害保険協会）",
+          "飛び立て！未来-FP技能士（金融財政事情研究会）"
+        ],
+        keyTopics: "日本学生支援機構（JASSO）の給付型・貸与型（第一種・第二種）奨学金、損害保険の「実損填補の原則」、賠償責任保険、6つの係数（終価係数・現価係数など）",
+        filterCat: "📚 公式事前教材（J-FLEC・省庁・協会）"
+      }
+    ];
+
+    const questionsData = [
+      {
+        id: 1,
+        category: "金融・日銀",
+        term: "売りオペレーション（公開市場操作）",
+        question: "日本銀行が景気の過熱やインフレを抑えるために行う「売りオペレーション」の説明として正しいものはどれか？",
+        options: [
+          "日銀が民間金融機関から国債などを買い入れ、市場の資金量を増やす",
+          "日銀が保有する国債や手形を民間金融機関に売却し、市場の資金を吸収する",
+          "政府が公共事業を増やして市場にお金を流す",
+          "預金準備率を引き下げて銀行が企業へ貸し出しやすくする"
+        ],
+        correctIndex: 1,
+        hint: "「日銀が国債を売って、代わりに市場から何を回収するか」を考えましょう。",
+        explanation: "売りオペレーションは、日銀が保有する国債などを金融機関に売却し、その代金として市場から資金（通貨）を吸収する金融引き締め策です。市場の資金が減ることで金利上昇が促され、景気の過熱やインフレを抑制します。"
+      },
+      {
+        id: 2,
+        category: "証券・企業財務",
+        term: "PER（株価収益率）と PBR（株価純資産倍率）",
+        question: "株価が1,500円、1株あたり純利益（EPS）が100円、1株あたり純資産（BPS）が1,000円の企業がある。この企業のPERとPBRの組み合わせとして正しいものはどれか？",
+        options: [
+          "PER 15倍 / PBR 1.5倍",
+          "PER 1.5倍 / PBR 15倍",
+          "PER 10倍 / PBR 1.5倍",
+          "PER 15倍 / PBR 10倍"
+        ],
+        correctIndex: 0,
+        hint: "PER ＝ 株価 ÷ EPS（1株あたり純利益）、PBR ＝ 株価 ÷ BPS（1株あたり純資産）です。",
+        explanation: "PER（株価収益率）は「1,500円 ÷ 100円 ＝ 15倍」、PBR（株価純資産倍率）は「1,500円 ÷ 1,000円 ＝ 1.5倍」となります。なお、「PBR ＝ PER × ROE」の関係式もエコノミクス甲子園の超頻出ポイントです。"
+      },
+      {
+        id: 3,
+        category: "国際経済・為替",
+        term: "円安・ドル高と輸出入への影響",
+        question: "外国為替市場で「1ドル＝140円」から「1ドル＝155円」へ変動した。この変動の呼び方と、一般的に生じる影響の組み合わせとして正しいものはどれか？",
+        options: [
+          "円高・ドル安 / 輸入品の円建て価格が下がる",
+          "円安・ドル高 / 日本の輸出企業の円建て売上（手取り額）が増えやすくなる",
+          "円高・ドル安 / 海外旅行の費用（円換算）が高くなる",
+          "円安・ドル高 / 原油や食料品などの輸入コストが低下する"
+        ],
+        correctIndex: 1,
+        hint: "1ドルを買うのにより多くの円が必要になっているため、円の価値は下がっています。",
+        explanation: "1ドル交換に必要な円が増えることは「円安・ドル高」を意味します。円安になると、海外で1ドルで販売した製品を円に換算した際の手取り額が増えるため輸出企業には追い風となりますが、輸入原材料の調達コストは上昇します。"
+      },
+      {
+        id: 4,
+        category: "財政・税金",
+        term: "プライマリーバランス（基礎的財政収支）",
+        question: "国の財政における「プライマリーバランス（基礎的財政収支）が黒字」とはどのような状態を指すか？",
+        options: [
+          "輸出額が輸入額を上回っている状態",
+          "税収などの歳入（借金を除く）が、過去の借金の元利払いを除いた歳出を上回っている状態",
+          "国債の発行額が前年度より減少している状態",
+          "日本銀行の保有する国債残高が減少している状態"
+        ],
+        correctIndex: 1,
+        hint: "過去の借金に関わる収支を切り離して、現在の行政サービスが現在の税収で賄えているかを見る指標です。",
+        explanation: "プライマリーバランス（基礎的財政収支）とは、「国債発行などの借入を除いた歳入（主に税収）」と「過去の借金の元利払い（国債費）を除いた歳出」の収支です。黒字であれば、現役世代の行政サービス費用を現在の税収等で賄えていることを意味します。"
+      },
+      {
+        id: 5,
+        category: "マクロ・ミクロ経済",
+        term: "名目GDP・実質GDP・GDPデフレーター",
+        question: "名目GDPの成長率が3%、GDPデフレーター（物価変動）の上昇率が1%であった場合、実質GDPの成長率はおよそ何%になるか？",
+        options: [
+          "約4%",
+          "約2%",
+          "約3%",
+          "約0.3%"
+        ],
+        correctIndex: 1,
+        hint: "名目成長率から物価上昇分を差し引いたものが実質成長率の近似値になります。",
+        explanation: "実質GDPは名目GDPから物価変動の影響を取り除いたものです。近似式として「実質GDP成長率 ≒ 名目GDP成長率 － 物価上昇率（GDPデフレーター変化率）」が成り立つため、3% － 1% ＝ 約2%となります。"
+      },
+      {
+        id: 6,
+        category: "金融・日銀",
+        term: "預金保険制度（ペイオフ）",
+        question: "銀行が破綻した際、預金保険制度によって「1金融機関あたり預金者1人につき元本1,000万円までとその利息」が保護される預金はどれか？",
+        options: [
+          "外貨預金",
+          "譲渡性預金（CD）",
+          "一般の定期預金",
+          "投資信託"
+        ],
+        correctIndex: 2,
+        hint: "外貨預金や投資信託は預金保険制度の対象外です。",
+        explanation: "一般の普通預金（利息がつくもの）や定期預金は、元本1,000万円までとその利息が保護されます。なお、無利息等の要件を満たす「決済用預金（当座預金など）」は全額保護され、外貨預金や譲渡性預金は保護対象外です。"
+      },
+      {
+        id: 7,
+        category: "国際経済・為替",
+        term: "IMF（国際通貨基金）とブレトン・ウッズ体制",
+        question: "第二次世界大戦後のブレトン・ウッズ体制において、加盟国の為替相場の安定と短期的な国際収支赤字国への融資を目的として設立された機関はどれか？",
+        options: [
+          "IMF（国際通貨基金）",
+          "WTO（世界貿易機関）",
+          "OECD（経済協力開発機構）",
+          "BIS（国際決済銀行）"
+        ],
+        correctIndex: 0,
+        hint: "通貨と為替の安定を監視する機関です（長期開発融資を行う世界銀行と対になります）。",
+        explanation: "1944年のブレトン・ウッズ協定に基づき、通貨・為替の安定と短期的な資金融通を担う「IMF（国際通貨基金）」と、戦後復興・開発融資を担う「国際復興開発銀行（世界銀行）」が設立されました。"
+      },
+      {
+        id: 8,
+        category: "マクロ・ミクロ経済",
+        term: "代替財と補完財",
+        question: "コーヒーと紅茶のように、一方の価格が上がるともう一方の需要が増える関係にある財を何と呼ぶか？",
+        options: [
+          "補完財",
+          "代替財",
+          "ギッフェン財",
+          "公共財"
+        ],
+        correctIndex: 1,
+        hint: "コーヒーが高くなったとき、代わりに紅茶を飲むようになる関係です。",
+        explanation: "互いに代用できる関係にある財を「代替財」と呼びます。一方、コーヒーと砂糖、プリンター本体とインクカートリッジのように、一緒に消費される関係にある財は「補完財」と呼びます。"
+      },
+      {
+        id: 9,
+        category: "証券・企業財務",
+        term: "ROE（自己資本利益率）",
+        question: "株主が出資した自己資本を使って、企業がどれだけ効率よく利益（当期純利益）を上げたかを示す指標はどれか？",
+        options: [
+          "ROA（総資産利益率）",
+          "ROE（自己資本利益率）",
+          "配当性向",
+          "自己資本比率"
+        ],
+        correctIndex: 1,
+        hint: "Return On Equity の略称です。",
+        explanation: "ROE（Return On Equity：自己資本利益率）は「当期純利益 ÷ 自己資本 × 100（%）」で算出され、株主資本の運用効率を示します。総資産に対する利益率はROA（Return On Assets）です。"
+      },
+      {
+        id: 10,
+        category: "財政・税金",
+        term: "直接税と間接税",
+        question: "日本の税金のうち、納税義務者と担税者（実際に税金を負担する人）が一致する「直接税」の組み合わせとして正しいものはどれか？",
+        options: [
+          "所得税・法人税・相続税",
+          "消費税・酒税・たばこ税",
+          "所得税・消費税・固定資産税",
+          "法人税・関税・揮発油税"
+        ],
+        correctIndex: 0,
+        hint: "消費税や酒税は、事業者が納めますが負担するのは消費者（間接税）です。",
+        explanation: "所得税、法人税、相続税、贈与税、住民税、固定資産税などは「直接税」です。一方、消費税、酒税、たばこ税、関税などは、負担する人と納める人が異なる「間接税」に分類されます。"
+      },
+      {
+        id: 11,
+        category: "証券・企業財務",
+        term: "債券価格と利回り（金利）の逆相関関係",
+        question: "市場金利が上昇したとき、すでに発行されている固定利付債券（既発債）の市場価格と最終利回りはどう変化するか？",
+        options: [
+          "債券価格は上昇し、利回りも上昇する",
+          "債券価格は下落し、利回りは上昇する",
+          "債券価格は上昇し、利回りは下落する",
+          "債券価格は下落し、利回りも下落する"
+        ],
+        correctIndex: 1,
+        hint: "市場により高い金利の新発債が出回ると、古い低い金利の債券の人気はどうなるでしょうか？",
+        explanation: "市場金利が上昇すると、低い利率の既発債は魅力が下がるため売られて「債券価格は下落」します。安く買えるようになる結果、購入価格に対する収益率である「利回りは上昇」します（債券価格と利回りはシーソーのように逆の動きをします）。"
+      },
+      {
+        id: 12,
+        category: "マクロ・ミクロ経済",
+        term: "ビルト・イン・スタビライザー（自動安定化装置）",
+        question: "累進課税制度や雇用保険（失業給付）のように、政府がその都度政策を変更しなくても自動的に景気の変動を和らげる仕組みを何というか？",
+        options: [
+          "フィスカル・ポリシー（裁量的財政政策）",
+          "ビルト・イン・スタビライザー（自動安定化装置）",
+          "クラウディング・アウト",
+          "流動性の罠"
+        ],
+        correctIndex: 1,
+        hint: "財政制度の中に最初から「組み込まれている（Built-in）」安定化機能です。",
+        explanation: "好況期には累進課税によって税収が自動的に増えて過熱を抑え、不況期には税負担が減り失業給付が増えることで景気の底割れを防ぐ仕組みを「ビルト・イン・スタビライザー（自動安定化装置）」と呼びます。"
+      },
+      {
+        id: 13,
+        category: "金融・日銀",
+        term: "信用創造のメカニズム",
+        question: "銀行が受け入れた預金の一部を支払準備として残し、残りを貸し出すことを繰り返すことで、当初の預金額の何倍もの預金通貨が作り出される仕組みを何と呼ぶか？",
+        options: [
+          "公開市場操作",
+          "信用創造",
+          "量的・質的金融緩和",
+          "マイナス金利政策"
+        ],
+        correctIndex: 1,
+        hint: "本源的預金 ÷ 支払準備率 ＝ 預金総額の上限 となる計算問題でもよく出題されます。",
+        explanation: "銀行が「預金受け入れ → 支払準備を残して貸出 → 借りたお金が別の銀行に預金される」というサイクルを繰り返すことで、経済全体の預金通貨が増える仕組みを「信用創造」と呼びます。"
+      },
+      {
+        id: 14,
+        category: "国際経済・為替",
+        term: "経常収支の構成項目",
+        question: "国際収支統計における「経常収支」を構成する4つの項目として、正しい組み合わせはどれか？",
+        options: [
+          "貿易収支・サービス収支・第一次所得収支・第二次所得収支",
+          "貿易収支・資本移転等収支・直接投資・証券投資",
+          "輸出収支・輸入収支・為替介入・外貨準備増減",
+          "経常移転収支・金融収支・財政収支・プライマリーバランス"
+        ],
+        correctIndex: 0,
+        hint: "モノの取引（貿易）、旅行などの取引（サービス）、海外投資からの利子や配当（第一次所得）、無償援助（第二次所得）の4つです。",
+        explanation: "経常収支は「貿易収支」「サービス収支」「第一次所得収支（対外金融債権・債務から生じる利子・配当金など）」「第二次所得収支（官民の無償資金協力・寄付など）」の4項目で構成されます。日本の経常収支は第一次所得収支の大幅な黒字が支えています。"
+      },
+      {
+        id: 15,
+        category: "マクロ・ミクロ経済",
+        term: "機会費用（オポチュニティ・コスト）",
+        question: "大学に進学することを選んだ場合、「もし進学せずに就職していたら得られたはずの給与収入」のように、ある選択をしたことで諦めた他の選択肢から得られたはずの最大の利益を何というか？",
+        options: [
+          "サンクコスト（埋没費用）",
+          "機会費用（オポチュニティ・コスト）",
+          "限界費用（マージナル・コスト）",
+          "取引費用（トランザクション・コスト）"
+        ],
+        correctIndex: 1,
+        hint: "「他の機会を選んでいたら得られたはずの価値」を指す経済学の基本概念です。",
+        explanation: "複数の選択肢から1つを選んだとき、選ばなかった選択肢のうち最も価値の高いものから得られたはずの利益を「機会費用」と呼びます。一方、すでに支払ってしまいどの選択をしても取り戻せない費用は「サンクコスト（埋没費用）」と呼びます。"
+      },
+      {
+        id: 16,
+        category: "📚 公式事前教材（J-FLEC・省庁・協会）",
+        term: "iDeCo（個人型確定拠出年金）の税制優遇",
+        question: "【事前教材：J-FLEC・金融庁】私的年金制度の一つである「iDeCo（個人型確定拠出年金）」の税制上のメリットとして、正しい説明はどれか？",
+        options: [
+          "掛金が全額所得控除となり、運用益も非課税で再投資され、受取時にも公的年金等控除や退職所得控除の対象となる",
+          "いつでも自由にペナルティなしで引き出すことができ、掛金に対して毎年国から20%の奨励金が支給される",
+          "元本割れのリスクが法律によって完全にゼロに保証されている",
+          "掛金は経費にならないが、受取時に一切の税金や社会保険料が免除される"
+        ],
+        correctIndex: 0,
+        hint: "「積立時（掛金）」「運用時（運用益）」「受取時（給付）」の3つの段階で税制優遇があるのが最大の特徴です。",
+        explanation: "iDeCo（個人型確定拠出年金）は、加入者が自ら掛金を拠出・運用する制度で、①掛金が全額「小規模企業共済等掛金控除（所得控除）」、②運用益が「非課税」、③受取時も「公的年金等控除」や「退職所得控除」の対象となります。原則60歳まで引き出せない点も押さえておきましょう。"
+      },
+      {
+        id: 17,
+        category: "💳 キャッシュレス・契約・消費者",
+        term: "フィッシング詐欺と不正送金対策",
+        question: "【事前教材：日本資金決済業協会『詐欺・犯罪にご注意』】実在する銀行やクレジットカード会社、通販サイトなどを装ったメールやSMS（ショートメッセージ）を送りつけ、偽のWebサイトへ誘導してID・パスワードや暗証番号、カード番号などを盗み出す手口を何と呼ぶか？",
+        options: [
+          "フィッシング（Phishing）",
+          "スキミング（Skimming）",
+          "インサイダー取引",
+          "ポンジ・スキーム"
+        ],
+        correctIndex: 0,
+        hint: "魚釣り（Fishing）のように偽のメールを餌にして個人情報を釣り上げる洗練された（Sophisticated）手口が語源です。",
+        explanation: "金融機関や決済事業者などを装ったメールやSMSから偽サイトへ誘導し、認証情報や個人情報を盗み取る手口を「フィッシング」と呼びます。対策として、メール内のリンクからログインせず公式アプリやブックマークからアクセスすることや、二要素認証（ワンタイムパスワードや生体認証）の設定が有効です。"
+      },
+      {
+        id: 18,
+        category: "マクロ・ミクロ経済",
+        term: "日本の経済三団体",
+        question: "日本の経済界を代表する「経済三団体」の組み合わせとして、正しいものはどれか？",
+        options: [
+          "経団連（日本経済団体連合会）・日本商工会議所・経済同友会",
+          "日本銀行・財務省・金融庁",
+          "連合（日本労働組合総連合会）・経団連・公正取引委員会",
+          "東京証券取引所・日本証券業協会・経済同友会"
+        ],
+        correctIndex: 0,
+        hint: "上場企業など大企業中心の「経団連」、全国の中小企業も含む地域ベースの「商工会議所」、経営者が個人の立場で参加する「経済同友会」の3つです。",
+        explanation: "日本の「経済三団体」とは、日本経済団体連合会（経団連）、日本商工会議所（日商）、経済同友会の3つを指します。エコノミクス甲子園でも政治・経済制度の基礎知識として頻出です。"
+      },
+      {
+        id: 19,
+        category: "マクロ・ミクロ経済",
+        term: "独占禁止法とカルテル・トラスト・コンツェルン",
+        question: "本来は互いに競争すべき同業種の複数の企業が、商品の価格や生産数量、販売地域などを話し合って協定を結び、不当に競争を制限する行為を何と呼ぶか？（※日本の独占禁止法で「不当な取引制限」として厳しく禁止されている）",
+        options: [
+          "カルテル（企業連合）",
+          "トラスト（企業合同）",
+          "コンツェルン（企業結合）",
+          "コングロマリット（複合企業）"
+        ],
+        correctIndex: 0,
+        hint: "企業同士が独立性を保ったまま、価格や生産量の協定を結ぶ「横のつながり（企業連合）」です。",
+        explanation: "同業他社間で価格や生産量を協定して競争を避ける行為を「カルテル（企業連合）」と呼びます。また、公共入札などで事前に受注予定者や価格を決める行為は「入札談合」と呼ばれ、いずれも独占禁止法（公正取引委員会が運用）で厳しく禁じられています。"
+      },
+      {
+        id: 20,
+        category: "📈 投信・Jリート・テクニカル",
+        term: "ボリンジャーバンドと標準偏差（σ：シグマ）",
+        question: "【事前教材：日本テクニカルアナリスト協会】移動平均線の上下に、統計学の「標準偏差（σ：シグマ）」を用いて値動きの収まる確率が高い範囲（バンド）を描画し、相場のボラティリティ（価格変動の大きさ）やトレンドを分析するテクニカル指標はどれか？",
+        options: [
+          "ボリンジャーバンド",
+          "一目均衡表",
+          "サイコロジカルライン",
+          "移動平均乖離率"
+        ],
+        correctIndex: 0,
+        hint: "1980年代にジョン・ボリンジャー氏が考案した指標で、±1σ（約68.3%）、±2σ（約95.4%）のラインがよく使われます。",
+        explanation: "ボリンジャーバンドは、移動平均線とその上下に標準偏差（±1σ、±2σ、±3σ）の線を引いた指標です。値動きが小さくなるとバンド幅が狭まり（スクイーズ）、大きなトレンドが発生するとバンド幅が広がる（エクスパンション）特徴があります。"
+      },
+      {
+        id: 21,
+        category: "財政・税金",
+        term: "消費税の「インボイス制度（適格請求書等保存方式）」",
+        question: "【事前教材：財務省『もっと知りたい税のこと』】2023年10月から導入された消費税の「適格請求書等保存方式（インボイス制度）」の目的および仕組みとして、正しい説明はどれか？",
+        options: [
+          "複数税率（標準税率10%・軽減税率8%）の下で、取引の正確な消費税率と消費税額を把握し、仕入税額控除を適正に行うための制度である",
+          "すべての飲食料品と日用品の消費税率を一律5%に引き下げるための制度である",
+          "輸出企業が支払った関税を全額免除するための貿易特例制度である",
+          "個人の所得税における累進課税の最高税率を引き上げる制度である"
+        ],
+        correctIndex: 0,
+        hint: "軽減税率（8%）と標準税率（10%）が混在する中で、どの税率でいくら消費税を支払ったかを明確にする仕組みです。",
+        explanation: "インボイス（適格請求書）制度は、売手が買手に対して正確な適用税率（8%または10%）や消費税額等を伝えるための制度です。買手側が消費税の納税額計算で「仕入税額控除」を受けるためには、原則として登録事業者（適格請求書発行事業者）が発行したインボイスの保存が必要となります。"
+      },
+      {
+        id: 22,
+        category: "🌱 SDGs・行動経済学",
+        term: "サンクコスト効果（埋没費用バイアス）",
+        question: "行動経済学において、「すでに支払ってしまい、これからどのような選択をしても取り戻すことができない費用（サンクコスト）」にこだわってしまい、将来的に損失が拡大すると分かっていても撤退や中止ができなくなる心理的傾向を何と呼ぶか？",
+        options: [
+          "サンクコスト効果（コンコルド効果）",
+          "バンドワゴン効果",
+          "ハロー効果",
+          "フレーミング効果"
+        ],
+        correctIndex: 0,
+        hint: "超音速旅客機「コンコルド」の開発で、採算が取れないと判明した後もこれまでの投資額が惜しくて開発を止められなかった事例から別名もついています。",
+        explanation: "すでに投じた時間・労力・お金（サンクコスト＝埋没費用）を惜しむあまり、合理的な損切りや撤退ができなくなる心理を「サンクコスト効果（コンコルド効果）」と呼びます。経済学的に合理的な意思決定を行うには、サンクコストは無視し「これからの追加費用と追加利益」だけを比較する必要があります。"
+      },
+      {
+        id: 23,
+        category: "🌱 SDGs・行動経済学",
+        term: "グリーンウォッシュ（見せかけの環境配慮）",
+        question: "【事前教材：環境省・資産運用業協会】実際には環境改善につながる実質的な取り組みを行っていないにもかかわらず、うわべだけ環境配慮やエコであるかのように誇大に宣伝し、消費者や投資家を誤認させる行為を何と呼ぶか？",
+        options: [
+          "グリーンウォッシュ（Greenwashing）",
+          "グリーンボンド（Green Bond）",
+          "カーボンプライシング",
+          "サーキュラーエコノミー"
+        ],
+        correctIndex: 0,
+        hint: "環境を意味する「グリーン（Green）」と、ごまかし・上辺を取り繕うことを意味する「ホワイトウォッシュ（Whitewash）」を組み合わせた言葉です。",
+        explanation: "実態を伴わないのに環境に配慮しているように見せかける行為を「グリーンウォッシュ」と呼びます。近年、ESG投資やサステナブルファイナンスの拡大に伴い、世界各国の金融当局がグリーンウォッシュ防止のための情報開示規制を強化しています。"
+      },
+      {
+        id: 24,
+        category: "🌱 SDGs・行動経済学",
+        term: "ESG投資",
+        question: "企業の財務情報（売上や利益など）だけでなく、「環境（Environment）」「社会（Social）」「企業統治（Governance）」の3つの非財務要素を考慮して投資先を選別する投資手法を何と呼ぶか？",
+        options: [
+          "ESG投資",
+          "デイトレード",
+          "ヘッジファンド投資",
+          "インデックス投資"
+        ],
+        correctIndex: 0,
+        hint: "3つの英単語の頭文字をとった、近年のエコノミクス甲子園で毎年のように出題される重要キーワードです。",
+        explanation: "環境（Environment）、社会（Social）、企業統治（Governance）への取り組みを評価して持続的な成長が見込める企業に投資する手法を「ESG投資」と呼びます。年金積立金管理運用独立行政法人（GPIF）も積極的に採用しています。"
+      },
+      {
+        id: 25,
+        category: "🌱 SDGs・行動経済学",
+        term: "ナッジ（Nudge）理論",
+        question: "行動経済学の知見を活かし、罰則や金銭的インセンティブを強制するのではなく、レジ袋の有料化や健診案内の工夫のように「人々が自発的に望ましい行動を選択するよう、肘で軽くつつくようにそっと後押しする」手法を何と呼ぶか？",
+        options: [
+          "ナッジ（Nudge）",
+          "サンクコスト効果",
+          "バンドワゴン効果",
+          "アンカリング効果"
+        ],
+        correctIndex: 0,
+        hint: "2017年にノーベル経済学賞を受賞したリチャード・セイラー教授が提唱した概念です。",
+        explanation: "「ナッジ（Nudge：肘で軽くつつく）」とは、選択の自由を残しながら、人々や社会にとってより良い選択を自発的に取れるよう促す行動経済学のアプローチです。環境政策や健康増進政策、地域のゴミ削減プロジェクトなどでも広く活用されています。"
+      },
+      {
+        id: 26,
+        category: "🌱 SDGs・行動経済学",
+        term: "プロスペクト理論と損失回避バイアス",
+        question: "ダニエル・カーネマンらが提唱した行動経済学の「プロスペクト理論」において、「1万円を得る喜び」よりも「1万円を失う苦痛」のほうが心理的に約2倍大きく感じられるため、人は損失を過度に恐れて非合理的な判断をしやすいという性質を何というか？",
+        options: [
+          "損失回避バイアス（損失回避性）",
+          "現状維持バイアス",
+          "スノッブ効果",
+          "ヴェブレン効果"
+        ],
+        correctIndex: 0,
+        hint: "利得よりも「損失」を避けることを強く優先してしまう人間の心理傾向です。",
+        explanation: "プロスペクト理論の中核にある概念で、同額であれば「得る喜び」より「失う悲しみ（苦痛）」を大きく評価する心理的傾向を「損失回避バイアス（損失回避性）」と呼びます。投資で含み損が出た株をなかなか損切りできない現象（塩漬け）の原因にもなります。"
+      },
+      {
+        id: 27,
+        category: "🌱 SDGs・行動経済学",
+        term: "クラウドファンディングの種類",
+        question: "インターネットを通じて不特定多数の人々から少額ずつ資金を調達する「クラウドファンディング」のうち、支援者が金銭を拠出し、その見返りとして「商品やオリジナルグッズ、サービス（リターン）」を受け取る方式を何と呼ぶか？",
+        options: [
+          "購入型クラウドファンディング",
+          "寄付型クラウドファンディング",
+          "融資型（貸付型）クラウドファンディング",
+          "株式投資型クラウドファンディング"
+        ],
+        correctIndex: 0,
+        hint: "金銭的な配当や利息ではなく、モノや体験などのリターンを「購入」する感覚で支援する最も一般的な方式です。",
+        explanation: "クラウドファンディングには大きく「購入型（モノやサービスが返礼される）」「寄付型（対価を求めない）」「金融型（融資型・ファンド型・株式投資型）」があります。金融型は金融商品取引法や貸金業法などの規制対象となります。"
+      },
+      {
+        id: 28,
+        category: "金融・日銀",
+        term: "新しいNISA（少額投資非課税制度）",
+        question: "2024年1月から抜本的拡充・恒久化された「新しいNISA」について、正しい説明はどれか？",
+        options: [
+          "非課税保有期間が無期限化され、つみたて投資枠と成長投資枠の併用が可能になった",
+          "20歳未満の高校生でも口座を開設できる「ジュニアNISA」が拡大された",
+          "上場株式の配当金や売却益に対して一律30%の税金がかかる制度である",
+          "非課税保有限度額（総枠）は生涯で300万円までとされている"
+        ],
+        correctIndex: 0,
+        hint: "通常は約20.315%かかる運用益への税金が、無期限で非課税（0円）になる制度です（対象は18歳以上）。",
+        explanation: "2024年からの新NISAでは、非課税保有期間が「無期限」となり、年間投資枠が最大360万円（つみたて投資枠120万円＋成長投資枠240万円の併用可）、生涯の非課税保有限度額は1,800万円に拡大されました。"
+      },
+      {
+        id: 29,
+        category: "財政・税金",
+        term: "ふるさと納税の仕組み",
+        question: "任意の地方自治体に寄附を行う「ふるさと納税」の税制上の仕組みとして、正しいものはどれか？",
+        options: [
+          "任意の自治体に寄附を行うと、控除上限額の範囲内で原則として自己負担額2,000円を除いた全額が、所得税および個人住民税から控除される",
+          "寄附した金額の2倍の現金が翌年国から還付される",
+          "自分の生まれ故郷（出身地）の自治体にしか寄附することができない",
+          "法人税のみが控除対象となり、個人の税金は変わらない"
+        ],
+        correctIndex: 0,
+        hint: "出身地に関わらず応援したい自治体に寄附でき、上限額の範囲内なら実質2,000円の負担で地域を応援できる寄附金控除制度です。",
+        explanation: "ふるさと納税は、応援したい都道府県・市区町村に寄附をした場合、控除上限額の範囲内で「寄附額 － 2,000円」が所得税の還付および翌年度の個人住民税から控除される制度です。また、確定申告が不要になる「ワンストップ特例制度（寄附先が5自治体以内等の条件あり）」もよく問われます。"
+      },
+      {
+        id: 30,
+        category: "マクロ・ミクロ経済",
+        term: "比較生産費説（比較優位）",
+        question: "イギリスの経済学者デヴィッド・リカードが提唱した、「すべての財の生産において生産性が高い国であっても、相対的により得意な財（機会費用が小さい財）に特化して貿易を行えば、双方の国に利益が生まれる」という貿易理論を何というか？",
+        options: [
+          "比較生産費説（比較優位の原則）",
+          "絶対優位の原則",
+          "保護貿易主義",
+          "有効需要の原理"
+        ],
+        correctIndex: 0,
+        hint: "イギリスとポルトガルの「毛織物」と「ぶどう酒（ワイン）」の例で説明される有名な理論です。",
+        explanation: "リカードの「比較生産費説」は、各国が自国内で最も機会費用の低い（比較優位にある）財の生産に特化して自由貿易を行えば、すべての国が貿易の利益を得られることを証明した国際経済学の最重要理論です。"
+      },
+      {
+        id: 31,
+        category: "📚 公式事前教材（J-FLEC・省庁・協会）",
+        term: "J-FLEC（金融経済教育推進機構）の設立",
+        question: "【事前教材：J-FLEC】2024年4月に設立され、エコノミクス甲子園の事前学習教材『マナブとメグミのお金のキホンBOOK』や『これであなたもひとり立ち』を提供している、官民一体で中立的な立場から金融経済教育を推進する認可法人はどれか？",
+        options: [
+          "J-FLEC（金融経済教育推進機構）",
+          "GPIF（年金積立金管理運用独立行政法人）",
+          "JASSO（日本学生支援機構）",
+          "JETRO（日本貿易振興機構）"
+        ],
+        correctIndex: 0,
+        hint: "金融広報中央委員会（知るぽると）や金融庁・証券・銀行業界などの機能を集約して誕生した機構です。",
+        explanation: "J-FLEC（Financial Literacy and Education Corporation：金融経済教育推進機構）は、2024年4月に設立された認可法人で、全国の学校への講師派遣や教材提供などを幅広く行っています。"
+      },
+      {
+        id: 32,
+        category: "💳 キャッシュレス・契約・消費者",
+        term: "キャッシュレス決済の3つの支払時期（Visa教材）",
+        question: "【事前教材：Visa キャッシュレスまるわかりテキスト】キャッシュレス決済は代金が引き落とされるタイミングによって3つに大別される。「前払い（Prepaid）」「即時払い（Debit）」「後払い（Postpay）」に該当する決済手段の組み合わせとして正しいものはどれか？",
+        options: [
+          "前払い：交通系ICカード等のチャージ式 ／ 即時払い：デビットカード ／ 後払い：クレジットカード",
+          "前払い：クレジットカード ／ 即時払い：電子マネー ／ 後払い：デビットカード",
+          "前払い：デビットカード ／ 即時払い：クレジットカード ／ 後払い：プリペイドカード",
+          "前払い：口座振替 ／ 即時払い：リボ払い ／ 後払い：デビットカード"
+        ],
+        correctIndex: 0,
+        hint: "デビットカードは決済と同時に銀行口座から引き落とされ、クレジットカードは後日まとめて引き落とされます。",
+        explanation: "キャッシュレス決済は、事前にチャージして使う「前払い（プリペイド）」、利用と同時に銀行口座から引き落とされる「即時払い（デビットカード）」、信用（クレジット）に基づき後日精算する「後払い（クレジットカード）」の3つに分類されます。"
+      },
+      {
+        id: 33,
+        category: "💳 キャッシュレス・契約・消費者",
+        term: "クレジットカードの「3当事者（3面）モデル」と「4当事者（4面）モデル」",
+        question: "【事前教材：Visa キャッシュレスまるわかりテキスト】クレジットカードの仕組みにおいて、カードを発行して会員に請求を行う会社を「イシュア（Issuer）」と呼ぶのに対し、加盟店を開拓・管理し加盟店へ代金を支払う会社を何と呼ぶか？",
+        options: [
+          "アクワイアラ（Acquirer：加盟店契約会社）",
+          "ブローカー（Broker：仲介業者）",
+          "カストディアン（Custodian：資産管理機関）",
+          "アンダーライター（Underwriter：引受会社）"
+        ],
+        correctIndex: 0,
+        hint: "カード会員と契約するのが「イシュア」、お店（加盟店）と契約するのが「アクワイアラ」です。",
+        explanation: "クレジットカードの4当事者モデルでは、①カード会員、②イシュア（カード発行会社）、③アクワイアラ（加盟店契約会社）、④加盟店が関わり、その間をVisaなどの国際ブランドが決済ネットワークとして繋いでいます。"
+      },
+      {
+        id: 34,
+        category: "💳 キャッシュレス・契約・消費者",
+        term: "前払式支払手段（資金決済法）の分類",
+        question: "【事前教材：日本資金決済業協会】商品券やICカード型電子マネーなどの「前払式支払手段」のうち、発行者のお店だけでなく、発行者以外の加盟店（コンビニや飲食店など幅広い店舗）でも使えるものを資金決済法上、何と呼ぶか？",
+        options: [
+          "第三者型前払式支払手段",
+          "自家型前払式支払手段",
+          "資金移動業",
+          "暗号資産交換業"
+        ],
+        correctIndex: 0,
+        hint: "自分のお店だけで使えるのが「自家型」、他のお店（第三者）でも使えるのが「第三者型」です。",
+        explanation: "前払式支払手段には、発行者自身の店舗等でのみ使える「自家型（届出制・基準日未使用残高1,000万円超の場合）」と、加盟店など第三者の店舗でも使える「第三者型（内閣総理大臣・財務局長の登録制）」の2種類があります。"
+      },
+      {
+        id: 35,
+        category: "💳 キャッシュレス・契約・消費者",
+        term: "前払式支払手段の発行保証金（保全義務）",
+        question: "【事前教材：日本資金決済業協会】前払式支払手段の発行者は、万が一破産した場合に利用者を保護するため、基準日（毎年3月末・9月末）における未使用残高が1,000万円を超えるとき、未使用残高の何分のいくつ以上を発行保証金として供託等により保全しなければならないか？",
+        options: [
+          "2分の1（50%）以上",
+          "10分の1（10%）以上",
+          "3分の1（約33%）以上",
+          "全額（100%）"
+        ],
+        correctIndex: 0,
+        hint: "未使用残高の半分（50%）以上を法務局への供託などで保全するルールです。",
+        explanation: "資金決済法により、基準日未使用残高が1,000万円を超える前払式支払手段の発行者は、その未使用残高の「2分の1（50%）以上」を発行保証金として供託等によって保全する義務があります。"
+      },
+      {
+        id: 36,
+        category: "💳 キャッシュレス・契約・消費者",
+        term: "資金移動業（送金サービス）と銀行以外の送金",
+        question: "【事前教材：日本資金決済業協会】スマホ決済アプリでの個人間送金や海外送金など、銀行以外の事業者が為替取引（送金サービス）を行うために資金決済法に基づき登録を受ける事業を何と呼ぶか？（※1回あたりの送金上限額に応じて第一種・第二種・第三種に区分される）",
+        options: [
+          "資金移動業",
+          "貸金業",
+          "第一種金融商品取引業",
+          "信託銀行業"
+        ],
+        correctIndex: 0,
+        hint: "事前学習教材『資金移動サービス 知っておきたい法律のはなし』のテーマとなっている業種です。",
+        explanation: "従来、為替取引（送金）は銀行等にのみ認められていましたが、資金決済法の制定により登録を受けた「資金移動業者」も送金サービスを提供できるようになりました。現在、送金額上限に応じて第一種（高額）、第二種（100万円以下）、第三種（5万円以下）の3類型があります。"
+      },
+      {
+        id: 37,
+        category: "📈 投信・Jリート・テクニカル",
+        term: "J-REIT（日本版不動産投資信託）の仕組み",
+        question: "【事前教材：不動産証券化協会 初めてのJリート】多くの投資家から集めた資金でオフィスビルや商業施設、マンションなどの不動産を購入し、その賃貸収入や売買益を投資家に分配する金融商品「J-REIT」について、正しい説明はどれか？",
+        options: [
+          "証券取引所に上場されており、株式と同じように市場でリアルタイムに売買できる",
+          "元本が法律で保証されており、価格が変動することはない",
+          "最低でも1億円以上の資金がないと購入できない",
+          "新しいNISAの成長投資枠では一切購入することができない"
+        ],
+        correctIndex: 0,
+        hint: "J-REITの「投資口」は東京証券取引所に上場されており、数万円〜数十万円程度から少額で不動産オーナーと同じような収益を得られます。",
+        explanation: "J-REIT（不動産投資信託）は証券取引所に上場されているため株式と同様に売買でき、新しいNISAの「成長投資枠」（一部要件を満たす投信等はつみたて枠対象も有）でも投資可能です。"
+      },
+      {
+        id: 38,
+        category: "📈 投信・Jリート・テクニカル",
+        term: "J-REITの導管性要件（法人税の実質非課税）",
+        question: "【事前教材：不動産証券化協会】J-REIT（不動産投資法人）は、一般的な株式会社と異なり、利益（配当可能利益）の何%超を投資家に分配すること等の要件を満たせば、実質的に法人税が非課税（損金算入）となり高い分配金利回りを実現できるか？",
+        options: [
+          "90%超",
+          "30%超",
+          "50%超",
+          "10%超"
+        ],
+        correctIndex: 0,
+        hint: "利益のほとんど（9割超）を投資家にそのままパススルー（導管のように流す）することで二重課税を防ぐ仕組みです。",
+        explanation: "J-REITは税法上の導管性要件として「配当可能利益の90%超を分配すること」などを満たす場合、分配金を損金（費用）に算入できるため、実質的に法人税がかからず、利益のほぼすべてが投資家に分配されます。"
+      },
+      {
+        id: 39,
+        category: "📈 投信・Jリート・テクニカル",
+        term: "投資信託に関わる3つの機関（販売・運用・管理）",
+        question: "【事前教材：資産運用業協会 わかりやすい投資信託ガイド】投資信託は、それぞれ役割が異なる3つの機関によって運営・分別管理されている。①投資家への窓口となる「販売会社」、②運用の指図を行う「運用会社（委託者）」と、もう一つ③信託財産を自身の財産と分別して保管・管理する機関はどれか？",
+        options: [
+          "受託会社（信託銀行）",
+          "日本銀行",
+          "公正取引委員会",
+          "預金保険機構"
+        ],
+        correctIndex: 0,
+        hint: "投資信託の財産を預かって分別管理する「信託銀行」のことです。",
+        explanation: "投資信託は「販売会社（証券会社・銀行等）」「運用会社（アセットマネジメント会社＝委託者）」「受託会社（信託銀行）」の3者で構成されます。受託会社が信託財産を自社の財産と分けて管理（分別管理）しているため、万一どの会社が破綻しても投資家の資産は守られます。"
+      },
+      {
+        id: 40,
+        category: "📈 投信・Jリート・テクニカル",
+        term: "投資信託のコスト（購入時手数料・運用管理費用）",
+        question: "【事前教材：資産運用業協会】投資信託を保有している期間中、信託財産の中から毎日自動的に差し引かれる、運用や管理の対価としての費用を何と呼ぶか？",
+        options: [
+          "運用管理費用（信託報酬）",
+          "購入時手数料（販売手数料）",
+          "信託財産留保額",
+          "売買委託手数料"
+        ],
+        correctIndex: 0,
+        hint: "買うときに1回だけ払うのが「購入時手数料（ノーロードなら無料）」、持っている間ずっとかかるのがこの費用です。",
+        explanation: "投資信託の主なコストには、買う時にかかる「購入時手数料」、保有期間中に毎日信託財産から差し引かれる「運用管理費用（信託報酬）」、解約時にかかることがある「信託財産留保額」があります。インデックスファンドはこの信託報酬が低いのが特徴です。"
+      },
+      {
+        id: 41,
+        category: "📈 投信・Jリート・テクニカル",
+        term: "ローソク足と「四本値（よんほんね）」",
+        question: "【事前教材：日本テクニカルアナリスト協会 テクニカル分析ハンドブック】株価チャートで使われる「ローソク足」は、一定期間における4つの価格（四本値）を表している。始値（はじめね）よりも終値（おわりね）のほうが高い状態のローソク足を何と呼ぶか？",
+        options: [
+          "陽線（ようせん）",
+          "陰線（いんせん）",
+          "移動平均線",
+          "ボリンジャーバンド"
+        ],
+        correctIndex: 0,
+        hint: "期間中に株価が上昇して終わった（明るい＝陽）か、下落して終わった（暗い＝陰）かで呼び分けます。",
+        explanation: "四本値とは「始値・高値・安値・終値」の4つです。始値より終値が高い（上昇した）ローソク足を「陽線」（白抜きや赤色で表示）、始値より終値が低い（下落した）ローソク足を「陰線」（黒塗りや青色で表示）と呼びます。"
+      },
+      {
+        id: 42,
+        category: "📈 投信・Jリート・テクニカル",
+        term: "ゴールデンクロスとデッドクロス",
+        question: "【事前教材：日本テクニカルアナリスト協会】テクニカル分析の移動平均線において、「短期の移動平均線」が「長期の移動平均線」を下から上へ突き抜ける現象で、一般的に相場の上昇トレンド入り（買いシグナル）とされるものを何と呼ぶか？",
+        options: [
+          "ゴールデンクロス",
+          "デッドクロス",
+          "ヘッド・アンド・ショルダーズ",
+          "ダブルボトム"
+        ],
+        correctIndex: 0,
+        hint: "反対に、短期線が長期線を上から下へ突き抜ける売りシグナルは「デッドクロス」と呼ばれます。",
+        explanation: "短期移動平均線が長期移動平均線を下から上に交差することを「ゴールデンクロス（買いサイン）」、上から下に交差することを「デッドクロス（売りサイン）」と呼びます。テクニカル分析ハンドブックの最重要基本用語です。"
+      },
+      {
+        id: 43,
+        category: "📈 投信・Jリート・テクニカル",
+        term: "トレンド系指標とオシレーター系指標（RSI）",
+        question: "【事前教材：日本テクニカルアナリスト協会】テクニカル指標のうち、相場が「買われすぎ」か「売られすぎ」かを0%〜100%の数値で判断するオシレーター系指標の代表例であり、一般に70%〜80%以上で買われすぎ、20%〜30%以下で売られすぎとされる指標はどれか？",
+        options: [
+          "RSI（相対力指数）",
+          "PER（株価収益率）",
+          "ROE（自己資本利益率）",
+          "GDPデフレーター"
+        ],
+        correctIndex: 0,
+        hint: "Relative Strength Index（相対力指数）の略称です。",
+        explanation: "RSI（Relative Strength Index：相対力指数）は、一定期間の値上がり幅と値下がり幅から相場の過熱感（買われすぎ・売られすぎ）を測るオシレーター系テクニカル指標の代表格です。"
+      },
+      {
+        id: 44,
+        category: "📚 公式事前教材（J-FLEC・省庁・協会）",
+        term: "暗号資産（仮想通貨）とブロックチェーン技術",
+        question: "【事前教材：日本クリプトコイン協会】ビットコインなどの暗号資産の基盤となっている、取引履歴のデータを「ブロック」という単位にまとめ、暗号技術を用いて鎖（チェーン）のように連結し、世界中の複数のコンピュータ（P2Pネットワーク）で分散して管理することで改ざんを極めて困難にする技術を何というか？",
+        options: [
+          "ブロックチェーン（分散型台帳技術）",
+          "クラウドファンディング",
+          "フィッシング詐欺対策",
+          "マイナス金利政策"
+        ],
+        correctIndex: 0,
+        hint: "特定の管理者がいなくてもデータの改ざんを防げる「鎖のように繋がったブロック」の技術です。",
+        explanation: "ブロックチェーンは、取引データをブロック単位で鎖状に連結し、P2P（ピア・ツー・ピア）ネットワーク上の多数の参加者で同一の台帳を共有・検証する技術です。なお、暗号資産の送金に必要な「秘密鍵」を紛失すると資産を取り出せなくなるため自己管理が極めて重要です。"
+      },
+      {
+        id: 45,
+        category: "💳 キャッシュレス・契約・消費者",
+        term: "18歳成年年齢引き下げと「未成年者取消権」",
+        question: "【事前教材：消費者庁『社会への扉』・J-FLEC『18歳までに学ぶ契約の知恵』】2022年4月の民法改正により成年年齢が20歳から18歳に引き下げられた。これにより、18歳・19歳の高校生や大学生ができるようになったこと（同時に生じる責任）として正しいものはどれか？",
+        options: [
+          "親（法定代理人）の同意がなくてもクレジットカードやローン、携帯電話の契約が一人でできるが、原則として『未成年者取消権』は使えなくなる",
+          "18歳から飲酒や喫煙、公営競技（競馬など）が法律で認められるようになった",
+          "契約を結んでも20歳になるまでは理由を問わずいつでも無条件で解約できる",
+          "国民年金の保険料納付義務が18歳0ヶ月から発生するようになった"
+        ],
+        correctIndex: 0,
+        hint: "18歳になると一人で有効な契約ができる反面、「未成年だから親の同意がない契約を取り消す」という保護は受けられなくなります。",
+        explanation: "18歳で成人となると、親の同意なしにクレジットカード作成やローン契約、賃貸契約が可能になりますが、未成年者取消権は行使できなくなります。なお、飲酒・喫煙・公営ギャンブルの解禁年齢や国民年金加入年齢は「20歳」のまま据え置かれています。"
+      },
+      {
+        id: 46,
+        category: "💳 キャッシュレス・契約・消費者",
+        term: "クーリング・オフ制度と通信販売の注意点",
+        question: "【事前教材：消費者庁『社会への扉』】特定商取引法に基づく「クーリング・オフ（無条件解約）」制度について、法律上のクーリング・オフが【適用されない】取引はどれか？",
+        options: [
+          "インターネット通販（通信販売）で自分から注文して購入した商品",
+          "自宅に突然やってきた営業員から購入した訪問販売（書面受領から8日間）",
+          "街頭で呼び止められて営業所に同行し契約したキャッチセールス（訪問販売・8日間）",
+          "連鎖販売取引（マルチ商法）（書面受領から20日間）"
+        ],
+        correctIndex: 0,
+        hint: "不意打ち性がある訪問販売や電話勧誘販売にはクーリング・オフがありますが、自分でじっくり比較して買うネット通販はどうでしょうか？",
+        explanation: "通信販売（ネット通販・テレビ通販など）には、不意打ち性がないため特定商取引法上の「クーリング・オフ制度」は適用されません。返品の可否や条件は、事業者が定めた「返品特約」に従うため、注文前の最終確認画面のチェックが極めて重要です。"
+      },
+      {
+        id: 47,
+        category: "💳 キャッシュレス・契約・消費者",
+        term: "消費者ホットライン「188（いやや！）」",
+        question: "【事前教材：消費者庁『鍛えよう、消費者力』】悪質商法や契約トラブルに巻き込まれた際、全国どこからでも最寄りの消費生活センターや消費生活相談窓口につながる3桁の電話番号「消費者ホットライン」は何番か？",
+        options: [
+          "188（いやや！）",
+          "110",
+          "119",
+          "171"
+        ],
+        correctIndex: 0,
+        hint: "語呂合わせは「泣き寝入りは いやや！（188）」です。",
+        explanation: "局番なしの「188（いやや！）」に電話すると、郵便番号等を通じて最寄りの市区町村や都道府県の消費生活センター等の相談窓口に案内されます。エコノミクス甲子園の消費者問題分野で頻出の番号です。"
+      },
+      {
+        id: 48,
+        category: "📚 公式事前教材（J-FLEC・省庁・協会）",
+        term: "日本学生支援機構（JASSO）の奨学金制度",
+        question: "【事前教材：日本FP協会『進学にかかるお金と奨学金の話』】日本学生支援機構（JASSO）の奨学金のうち、卒業後に返還（返済）する義務がある「貸与型奨学金」において、【無利子（利子がつかない）】で借りられるものはどれか？",
+        options: [
+          "第一種奨学金",
+          "第二種奨学金",
+          "給付型奨学金",
+          "教育一般貸付（国の教育ローン）"
+        ],
+        correctIndex: 0,
+        hint: "返還不要なのが「給付型」、貸与型のうち無利子が「第一種」、有利子（上限年3.0%）が「第二種」です。",
+        explanation: "JASSOの奨学金には、返還不要の「給付型」と、卒業後に本人が返還する「貸与型」があります。貸与型のうち、無利子のものを「第一種奨学金」、利子がつくものを「第二種奨学金」と呼びます。"
+      },
+      {
+        id: 49,
+        category: "📚 公式事前教材（J-FLEC・省庁・協会）",
+        term: "損害保険の「実損填補（じっそんてんぽ）の原則」",
+        question: "【事前教材：日本損害保険協会『明るい未来へTRY！〜リスクと備え〜』】火災保険や自動車保険などの損害保険において、保険金は「実際に生じた損害額」を上限として支払われ、保険によって利益を得てはならない（利得禁止）という原則を何というか？",
+        options: [
+          "実損填補（じっそんてんぽ）の原則",
+          "定額給付の原則",
+          "大数の法則",
+          "収支相等の原則"
+        ],
+        correctIndex: 0,
+        hint: "たとえば時価1,000万円の家に2つの保険会社で合計2,000万円の火災保険をかけても、全焼時に受け取れる保険金は合計1,000万円までとなります。",
+        explanation: "損害保険は「実損填補の原則（利得禁止の原則）」に基づき、実際の損害額を上限に保険金が支払われます。一方、生命保険や医療保険は契約時に定めた一定額が支払われる「定額給付」が基本です。"
+      },
+      {
+        id: 50,
+        category: "📚 公式事前教材（J-FLEC・省庁・協会）",
+        term: "人生の3大資金とライフプランニング",
+        question: "【事前教材：日本FP協会・J-FLEC】パーソナルファイナンス（個人の資金計画）において、一般に「人生の3大資金（3大支出）」と呼ばれるものの組み合わせとして正しいものはどれか？",
+        options: [
+          "教育資金・住宅資金・老後資金",
+          "結婚資金・旅行資金・自動車購入資金",
+          "医療費・税金・通信費",
+          "株式投資資金・不動産投資資金・暗号資産資金"
+        ],
+        correctIndex: 0,
+        hint: "子どもの進学、マイホームの取得、退職後の生活費の3つです。",
+        explanation: "ライフプランニングにおいて特にまとまった金額が必要となる「教育資金」「住宅資金」「老後資金」の3つを「人生の3大資金」と呼びます。"
+      },
+      {
+        id: 51,
+        category: "📚 公式事前教材（J-FLEC・省庁・協会）",
+        term: "単利と複利・「72の法則」",
+        question: "【事前教材：金融庁『基礎から学べる金融ガイド』・J-FLEC】資産運用において、運用で得た利息を元本に組み入れてさらに利息がつく「複利（ふくり）」で運用したとき、元本が「約2倍」になるまでの年数を簡単に計算できる概算式を何というか？（例：年利3%なら 72 ÷ 3 ＝ 約24年で2倍）",
+        options: [
+          "72の法則",
+          "パレートの法則（80対20の法則）",
+          "グレシャムの法則",
+          "エンゲルの法則"
+        ],
+        correctIndex: 0,
+        hint: "「72 ÷ 金利（%） ≒ お金が2倍になる年数」という、エコノミクス甲子園の計算問題でも大活躍する公式です。",
+        explanation: "複利運用で元本が2倍になる年数は「72 ÷ 金利（%）＝ 年数」で近似計算でき、これを「72の法則」と呼びます。また、借金を複利で借りた場合にも同じスピードで負債が2倍になるため注意が必要です。"
+      },
+      {
+        id: 52,
+        category: "📚 公式事前教材（J-FLEC・省庁・協会）",
+        term: "ドル・コスト平均法（定額積立投資）",
+        question: "【事前教材：J-FLEC『サクサクわかる！資産運用と証券投資スタートブック』】投資信託などを購入する際、一度に全額を買うのではなく、「毎月1万円ずつ」のように一定の金額で定期的に買い続けることで、価格が高いときには少なく、価格が低いときには多く購入でき、結果として平均購入単価を平準化させる投資手法を何というか？",
+        options: [
+          "ドル・コスト平均法",
+          "ナンピン買い",
+          "空売り（信用売り）",
+          "インサイダー取引"
+        ],
+        correctIndex: 0,
+        hint: "新しいNISAの「つみたて投資枠」でも活用される、時間分散の代表的な手法です。",
+        explanation: "毎回「同じ口数（株数）」ではなく「同じ金額（定額）」で定期的に買い付ける手法を「ドル・コスト平均法」と呼びます。高値掴みのリスクを和らげ、長期・積立投資を続けやすくする効果があります。"
+      },
+      {
+        id: 53,
+        category: "財政・税金",
+        term: "日本の一般会計歳入・歳出の最大項目",
+        question: "【事前教材：財務省『これからの日本のために財政を考える』】日本の国の予算（一般会計）において、歳入（収入）の中で最も大きな割合を占める税目（または公債金）を除いた「歳出（支出）」の中で、現在最も大きな割合（約3分の1）を占めている経費はどれか？",
+        options: [
+          "社会保障関係費（年金・医療・介護・少子化対策など）",
+          "防衛関係費",
+          "公共事業関係費",
+          "文教及び科学振興費"
+        ],
+        correctIndex: 0,
+        hint: "少子高齢化の進行に伴い、年金や医療・介護などの予算が一般会計歳出の最大の割合を占めています。",
+        explanation: "日本の一般会計歳出では「社会保障関係費」が全体の約3分の1を占めて最大となっており、次いで「国債費（過去の借金の元利払い）」「地方交付税交付金等」が続きます。この3つで歳出全体の約7割を占めています。"
+      },
+      {
+        id: 54,
+        category: "🌱 SDGs・行動経済学",
+        term: "グリーンボンドとサステナブルファイナンス",
+        question: "【事前教材：環境省『持続可能な社会の形成に向けた金融行動原則』】企業や地方自治体、国際機関などが、再生可能エネルギー事業や省エネ設備の導入など「環境改善効果のあるプロジェクト」に資金使途を限定して発行する債券を何と呼ぶか？",
+        options: [
+          "グリーンボンド（環境債）",
+          "ジャンクボンド（ハイイールド債）",
+          "ゼロクーポン債（割引債）",
+          "転換社債（CB）"
+        ],
+        correctIndex: 0,
+        hint: "環境（Green）に特化した債券（Bond）です。",
+        explanation: "調達した資金の使い道を環境分野の事業に限定して発行される債券を「グリーンボンド」と呼びます。また、社会課題解決に限定したものは「ソーシャルボンド」、双方を合わせたものは「サステナビリティボンド」と呼ばれます。"
+      },
+      {
+        id: 55,
+        category: "📚 公式事前教材（J-FLEC・省庁・協会）",
+        term: "FP（ファイナンシャル・プランナー）と6つの係数",
+        question: "【事前教材：金融財政事情研究会『飛び立て！未来-FP技能士』】ファイナンシャル・プランニングの資金計算で使う「6つの係数」のうち、『10年後に100万円を貯めるために、年利2%で複利運用する場合、毎年いくら積み立てればよいか？』を求める際に使う係数はどれか？",
+        options: [
+          "減債基金係数",
+          "終価係数",
+          "現価係数",
+          "資本回収係数"
+        ],
+        correctIndex: 0,
+        hint: "目標額を貯めるための毎年の積立額を求めるのが「減債基金係数」、逆に毎年の積立額から将来の合計額を求めるのが「年金終価係数」です。",
+        explanation: "FP技能士試験やエコノミクス甲子園の上級問題で出題される6つの係数のうち、将来の目標額から毎年の必要積立額を算出する係数は「減債基金係数」です。なお、手元の元本を複利運用した将来額は「終価係数」を使います。"
+      }
+    ];
+
+    const categories = [
+      "すべて",
+      "📚 公式事前教材（J-FLEC・省庁・協会）",
+      "💳 キャッシュレス・契約・消費者",
+      "📈 投信・Jリート・テクニカル",
+      "🌱 SDGs・行動経済学",
+      "金融・日銀",
+      "証券・企業財務",
+      "国際経済・為替",
+      "財政・税金",
+      "マクロ・ミクロ経済"
+    ];
+    let currentMode = "quiz";
+    let selectedCategory = "すべて";
+    let filteredQuestions = [...questionsData];
+    let wrongQuestionIds = new Set();
+    let currentIndex = 0;
+    let score = 0;
+    let points = 0;
+    let answered = false;
+
+    let timerInterval = null;
+    let remainingTime = 15.0;
+    let cardFlipped = false;
+
+    function init() {
+      renderCategories();
+      renderMaterials();
+      applyFilter("すべて");
+    }
+
+    function switchMode(mode) {
+      currentMode = mode;
+      stopTimer();
+
+      const modes = [
+        { id: "modeQuizBtn", key: "quiz", active: "flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-white text-indigo-950 shadow transition", inactive: "flex-1 sm:flex-initial px-3 py-2 rounded-lg text-indigo-200 hover:text-white transition" },
+        { id: "modeSpeedBtn", key: "speed", active: "flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-white text-indigo-950 shadow transition", inactive: "flex-1 sm:flex-initial px-3 py-2 rounded-lg text-indigo-200 hover:text-white transition" },
+        { id: "modeCardBtn", key: "flashcard", active: "flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-white text-indigo-950 shadow transition", inactive: "flex-1 sm:flex-initial px-3 py-2 rounded-lg text-indigo-200 hover:text-white transition" },
+        { id: "modeMaterialsBtn", key: "materials", active: "flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-amber-400 text-slate-950 shadow transition font-extrabold", inactive: "flex-1 sm:flex-initial px-3 py-2 rounded-lg text-amber-300 hover:text-amber-200 transition" }
+      ];
+
+      modes.forEach(m => {
+        const el = document.getElementById(m.id);
+        if (el) el.className = (mode === m.key) ? m.active : m.inactive;
+      });
+
+      const quizSec = document.getElementById("quizSection");
+      const resSec = document.getElementById("resultSection");
+      const cardSec = document.getElementById("flashcardSection");
+      const matSec = document.getElementById("materialsSection");
+
+      quizSec.classList.add("hidden");
+      resSec.classList.add("hidden");
+      cardSec.classList.add("hidden");
+      matSec.classList.add("hidden");
+
+      if (mode === "flashcard") {
+        cardSec.classList.remove("hidden");
+        currentIndex = 0;
+        renderFlashcard();
+      } else if (mode === "materials") {
+        matSec.classList.remove("hidden");
+      } else {
+        resetQuiz();
+      }
+    }
+
+    function renderMaterials() {
+      const grid = document.getElementById("materialsGrid");
+      if (!grid) return;
+      grid.innerHTML = "";
+      studyMaterialsList.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "p-4 rounded-2xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between gap-3";
+        const titleList = item.titles.map(t => `<li class="text-xs font-bold text-slate-700">・${t}</li>`).join("");
+        card.innerHTML = `
+          <div>
+            <div class="text-xs font-extrabold text-indigo-700 bg-indigo-100 inline-block px-2.5 py-0.5 rounded-full mb-2">${item.org}</div>
+            <ul class="space-y-1 mb-3">${titleList}</ul>
+            <div class="p-2.5 bg-white rounded-xl border border-slate-200/80 text-xs text-slate-600">
+              <strong class="text-slate-800">🎯 頻出キーワード：</strong>${item.keyTopics}
+            </div>
+          </div>
+          <button onclick="selectMaterialCategory('${item.filterCat}')" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold rounded-xl shadow-sm transition">
+            この分野の問題を演習する →
+          </button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function selectMaterialCategory(cat) {
+      currentMode = "quiz";
+      applyFilter(cat);
+      switchMode("quiz");
+    }
+
+    function renderCategories() {
+      const container = document.getElementById("categoryContainer");
+      container.innerHTML = "";
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        const isActive = cat === selectedCategory;
+        btn.className = isActive
+          ? "px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-indigo-600 text-white shadow-sm transition"
+          : "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
+        btn.textContent = cat;
+        btn.onclick = () => applyFilter(cat);
+        container.appendChild(btn);
+      });
+    }
+
+    function applyFilter(category) {
+      selectedCategory = category;
+      filteredQuestions = category === "すべて"
+        ? [...questionsData]
+        : questionsData.filter(q => q.category === category);
+      renderCategories();
+      document.getElementById("questionCountBadge").textContent = `全${filteredQuestions.length}問`;
+      resetQuiz();
+      renderFlashcard();
+    }
+
+    function shuffleQuestions() {
+      for (let i = filteredQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filteredQuestions[i], filteredQuestions[j]] = [filteredQuestions[j], filteredQuestions[i]];
+      }
+      resetQuiz();
+      renderFlashcard();
+    }
+
+    function startWrongReview() {
+      if (wrongQuestionIds.size === 0) return;
+      selectedCategory = "🔥 誤答復習";
+      filteredQuestions = questionsData.filter(q => wrongQuestionIds.has(q.id));
+      renderCategories();
+      document.getElementById("questionCountBadge").textContent = `復習${filteredQuestions.length}問`;
+      resetQuiz();
+      renderFlashcard();
+    }
+
+    function updateWrongButtons() {
+      const count = wrongQuestionIds.size;
+      const topBtn = document.getElementById("wrongOnlyBtn");
+      const resBtn = document.getElementById("resultWrongBtn");
+
+      if (count > 0) {
+        topBtn.textContent = `🔥 誤答のみ復習 (${count})`;
+        topBtn.classList.remove("hidden");
+        resBtn.textContent = `🔥 間違えた問題だけ復習する (${count}問)`;
+        resBtn.classList.remove("hidden");
+      } else {
+        topBtn.classList.add("hidden");
+        resBtn.classList.add("hidden");
+      }
+    }
+
+    function resetQuiz() {
+      stopTimer();
+      currentIndex = 0;
+      score = 0;
+      points = 0;
+      document.getElementById("scoreCount").textContent = "0";
+      document.getElementById("pointCount").textContent = "0";
+      document.getElementById("resultSection").classList.add("hidden");
+      if (currentMode !== "flashcard") {
+        document.getElementById("quizSection").classList.remove("hidden");
+        renderQuestion();
+      }
+    }
+
+    function renderQuestion() {
+      stopTimer();
+      answered = false;
+      const q = filteredQuestions[currentIndex];
+
+      document.getElementById("currentCategoryBadge").textContent = q.category;
+      document.getElementById("progressText").textContent = `第 ${currentIndex + 1} / ${filteredQuestions.length} 問`;
+      document.getElementById("progressBar").style.width = `${((currentIndex + 1) / filteredQuestions.length) * 100}%`;
+      document.getElementById("questionTermSub").textContent = `テーマ：${q.term}`;
+      document.getElementById("questionText").textContent = q.question;
+
+      document.getElementById("hintBox").classList.add("hidden");
+      document.getElementById("hintBox").textContent = q.hint;
+      document.getElementById("explanationBox").classList.add("hidden");
+      document.getElementById("nextBtn").classList.add("hidden");
+
+      const optionsContainer = document.getElementById("optionsContainer");
+      optionsContainer.innerHTML = "";
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "w-full text-left p-4 rounded-xl border-2 border-slate-200 hover:border-indigo-500 hover:bg-indigo-50/50 transition flex items-start gap-3.5 font-bold text-slate-700";
+        btn.innerHTML = `
+          <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-200 text-slate-800 text-xs font-black shrink-0 mt-0.5">${idx + 1}</span>
+          <span>${opt}</span>
+        `;
+        btn.onclick = () => selectAnswer(idx);
+        optionsContainer.appendChild(btn);
+      });
+
+      const timerDisplay = document.getElementById("timerDisplay");
+      if (currentMode === "speed") {
+        timerDisplay.classList.remove("hidden");
+        timerDisplay.classList.add("flex");
+        startTimer();
+      } else {
+        timerDisplay.classList.add("hidden");
+        timerDisplay.classList.remove("flex");
+      }
+    }
+
+    function startTimer() {
+      remainingTime = 15.0;
+      const timerEl = document.getElementById("timerSeconds");
+      const timerBox = document.getElementById("timerDisplay");
+      timerEl.textContent = remainingTime.toFixed(1);
+      timerBox.classList.remove("timer-urgent");
+
+      timerInterval = setInterval(() => {
+        remainingTime -= 0.1;
+        if (remainingTime <= 5.0) {
+          timerBox.classList.add("timer-urgent");
+        }
+        if (remainingTime <= 0) {
+          remainingTime = 0;
+          timerEl.textContent = "0.0";
+          stopTimer();
+          selectAnswer(-1);
+        } else {
+          timerEl.textContent = remainingTime.toFixed(1);
+        }
+      }, 100);
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      document.getElementById("timerDisplay").classList.remove("timer-urgent");
+    }
+
+    function selectAnswer(selectedIndex) {
+      if (answered) return;
+      answered = true;
+      stopTimer();
+
+      const q = filteredQuestions[currentIndex];
+      const isCorrect = selectedIndex === q.correctIndex;
+      const buttons = document.getElementById("optionsContainer").children;
+
+      for (let i = 0; i < buttons.length; i++) {
+        buttons[i].disabled = true;
+        if (i === q.correctIndex) {
+          buttons[i].className = "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-950 font-extrabold flex items-start gap-3.5 shadow-sm";
+        } else if (i === selectedIndex) {
+          buttons[i].className = "w-full text-left p-4 rounded-xl border-2 border-rose-400 bg-rose-50 text-rose-900 font-bold flex items-start gap-3.5";
+        } else {
+          buttons[i].className = "w-full text-left p-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-400 flex items-start gap-3.5 opacity-60";
+        }
+      }
+
+      const expBox = document.getElementById("explanationBox");
+      const resHeader = document.getElementById("resultHeader");
+      const expText = document.getElementById("explanationText");
+
+      if (isCorrect) {
+        score++;
+        wrongQuestionIds.delete(q.id);
+        const earned = currentMode === "speed" ? Math.max(20, Math.round(remainingTime * 10)) : 100;
+        points += earned;
+        expBox.className = "mt-6 p-5 rounded-2xl border-2 border-emerald-300 bg-emerald-50/80";
+        resHeader.className = "font-extrabold text-lg mb-2 text-emerald-800 flex items-center gap-2";
+        resHeader.innerHTML = `⭕ 正解！ <span class="text-xs bg-emerald-200 text-emerald-900 px-2.5 py-0.5 rounded-full">+${earned} pt</span>`;
+      } else {
+        wrongQuestionIds.add(q.id);
+        if (currentMode === "speed") points = Math.max(0, points - 30);
+        expBox.className = "mt-6 p-5 rounded-2xl border-2 border-rose-300 bg-rose-50/80";
+        resHeader.className = "font-extrabold text-lg mb-2 text-rose-800 flex items-center gap-2";
+        resHeader.innerHTML = selectedIndex === -1
+          ? `⏰ 時間切れ！ 正解は「${q.options[q.correctIndex]}」`
+          : `❌ 不正解… 正解は「${q.options[q.correctIndex]}」`;
+      }
+
+      updateWrongButtons();
+      document.getElementById("scoreCount").textContent = score;
+      document.getElementById("pointCount").textContent = points;
+      expText.textContent = q.explanation;
+      expBox.classList.remove("hidden");
+
+      const nextBtn = document.getElementById("nextBtn");
+      nextBtn.textContent = currentIndex + 1 < filteredQuestions.length ? "次の問題へ →" : "結果を見る 🏆";
+      nextBtn.classList.remove("hidden");
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < filteredQuestions.length) {
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById("quizSection").classList.add("hidden");
+      const resSec = document.getElementById("resultSection");
+      resSec.classList.remove("hidden");
+
+      const total = filteredQuestions.length;
+      const rate = Math.round((score / total) * 100);
+      document.getElementById("finalCorrect").textContent = `${score} / ${total}`;
+      document.getElementById("finalRate").textContent = `${rate}%`;
+      document.getElementById("finalPoints").textContent = `${points} pt`;
+
+      let msg = "";
+      if (rate === 100) msg = "パーフェクト達成！全国大会を狙える素晴らしい実力です！";
+      else if (rate >= 75) msg = "高得点です！間違えた問題の解説を復習してさらに盤石にしましょう。";
+      else msg = "用語カードモードも活用して、経済指標や政策の因果関係を整理してみましょう！";
+      document.getElementById("finalSummaryText").textContent = msg;
+    }
+
+    function toggleHint() {
+      const box = document.getElementById("hintBox");
+      box.classList.toggle("hidden");
+    }
+
+    function renderFlashcard() {
+      cardFlipped = false;
+      const q = filteredQuestions[currentIndex];
+      document.getElementById("cardCategoryBadge").textContent = q.category;
+      document.getElementById("cardIndexText").textContent = `${currentIndex + 1} / ${filteredQuestions.length}`;
+      updateCardContent();
+    }
+
+    function updateCardContent() {
+      const q = filteredQuestions[currentIndex];
+      const label = document.getElementById("cardSideLabel");
+      const main = document.getElementById("cardMainText");
+      const sub = document.getElementById("cardSubText");
+
+      if (!cardFlipped) {
+        label.textContent = "表面：重要テーマ・問題";
+        label.className = "text-xs uppercase font-extrabold tracking-widest text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full mb-4";
+        main.textContent = q.term;
+        sub.textContent = q.question;
+      } else {
+        label.textContent = "裏面：正解とポイント解説";
+        label.className = "text-xs uppercase font-extrabold tracking-widest text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full mb-4";
+        main.textContent = q.options[q.correctIndex];
+        sub.textContent = q.explanation;
+      }
+    }
+
+    function flipCard() {
+      cardFlipped = !cardFlipped;
+      updateCardContent();
+    }
+
+    function prevCard() {
+      currentIndex = (currentIndex - 1 + filteredQuestions.length) % filteredQuestions.length;
+      renderFlashcard();
+    }
+
+    function nextCard() {
+      currentIndex = (currentIndex + 1) % filteredQuestions.length;
+      renderFlashcard();
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
